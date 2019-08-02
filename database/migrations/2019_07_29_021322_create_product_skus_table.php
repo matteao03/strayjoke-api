@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class CreateProductSkusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('product_skus', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nick_name');
-            $table->string('phone', 20)->unique();
-            $table->boolean('is_normal')->default(true);
-            $table->date('birth')->nullable();
-            $table->string('password');
+            $table->string('title');
+            $table->string('description');
+            $table->decimal('price', 10, 2);
+            $table->unsignedInteger('stock');
+            $table->unsignedBigInteger('product_id');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('product_skus');
     }
 }
