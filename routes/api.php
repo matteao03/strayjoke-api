@@ -32,6 +32,10 @@ $api->version('v1', [
         $api->post('signup', 'AuthController@signup');
         $api->post('loginByPassword', 'AuthController@loginByPassword');
         $api->post('loginByCode', 'AuthController@loginByCode');
+        //律师
+        $api->post('lawyerSignupCode', 'LawyerController@storeSignupCode');
+        $api->post('lawyerLoginCode', 'LawyerController@storeLoginCode');
+        $api->post('lawyerSignup', 'LawyerController@signup');
     });
     
     $api->post('product', 'ProductController@store');

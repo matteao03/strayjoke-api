@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\Api\SignupCodeRequest;
 use App\Http\Requests\Api\LoginCodeRequest;
 use Illuminate\Support\Facades\Cache;

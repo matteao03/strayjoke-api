@@ -44,8 +44,12 @@ return [
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
-            'hash' => false,
         ],
+
+        'lawyers'=> [
+            'driver' => 'jwt',
+            'provider' => 'lawyers',
+        ]
     ],
 
     /*
@@ -75,6 +79,10 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'lawyers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Lawyer::class
+        ]
     ],
 
     /*
