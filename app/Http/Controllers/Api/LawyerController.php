@@ -84,9 +84,63 @@ class LawyerController extends Controller
         Cache::forget('lawyerSignupCode:'.$request->phone);
         
         //自动登录
-        $token = auth()->login($lawyer);
+        $token = auth('lawyer')->login($lawyer);
         
         return $this->respondWithToken($token);
+    }
+
+    //密码登录
+    public function loginByPassword (AuthPasswordRequest $request)
+    {
+        $credentials = request(['phone', 'password']);
+
+        if (! $token = auth('lawyer')->attempt($credentials)) {
+            return response()->errorUnauthorized('用户名或密码错误');
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    //验证码登录
+    public function loginByCode (AuthCodeRequest $request)
+    {
+        $verifyData = Cache::get('lawyerLoginCode:'.$request->phone);
+        
+        if (!$verifyData) {
+            return $this->response->error('验证码已失效', 422);
+        }
+        
+        if (!hash_equals($verifyData, $request->verifyCode)) {
+            // 401
+            return $this->response->errorUnauthorized('验证码错误');
+        }
+        
+        $lawyer = Lawyer::where('phone', $request->phone)->first();
+        if (!$lawyer){
+            return $this->response->error('', 401);
+        }
+        // 清除缓存
+        Cache::forget('loginCode:'.$request->phone);
+        
+        //自动登录
+        $token = auth('lawyer')->login($lawyer);
+        
+        
+        return $this->respondWithToken($token);
+    }
+
+    //退出
+    public function logout()
+    {
+        auth()->logout();
+
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    //获取律师信息
+    public function getInfo()
+    {
+        return response()->json(auth('lawyer')->user());
     }
 
     //返回token
