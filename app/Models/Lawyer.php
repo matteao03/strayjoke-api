@@ -24,6 +24,7 @@ class Lawyer extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return ['role' => 'lawyer'];
+        // return ['role' => 'lawyer'];
+        return [];
     }
 }

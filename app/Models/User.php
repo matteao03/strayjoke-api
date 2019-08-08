@@ -27,7 +27,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return ['role' => 'user'];
+        return [];
+        // return ['role' => 'user'];
     }
 
     //生成随机字符串

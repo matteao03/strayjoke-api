@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'user',
         'passwords' => 'users',
     ],
 
@@ -41,12 +41,12 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
+        'user' => [
             'driver' => 'jwt',
             'provider' => 'users',
         ],
 
-        'lawyers'=> [
+        'lawyer' => [
             'driver' => 'jwt',
             'provider' => 'lawyers',
         ]
@@ -81,7 +81,7 @@ return [
         // ],
         'lawyers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Lawyer::class
+            'model' => App\Models\Lawyer::class,
         ]
     ],
 

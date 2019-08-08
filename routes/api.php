@@ -19,34 +19,56 @@ use Illuminate\Http\Request;
 
 $api = app('Dingo\Api\Routing\Router');
 
+//web端路由
 $api->version('v1', [
-    'namespace' =>'App\Http\Controllers\Api'
+    'namespace' =>'App\Http\Controllers\Web'
 ], function($api){
-    $api->group([
-        'middleware' => 'api.throttle',
-        'limit' => config('api.rate_limits.sign.limit'),
-        'expires' => config('api.rate_limits.sign.expires'),
-    ], function($api){
-        $api->post('signupCode', 'VerifyCodeController@storeSignupCode');
-        $api->post('loginCode', 'VerifyCodeController@storeLoginCode');
-        $api->post('signup', 'AuthController@signup');
-        $api->post('loginByPassword', 'AuthController@loginByPassword');
-        $api->post('loginByCode', 'AuthController@loginByCode');
-        //律师
-        $api->post('lawyerSignupCode', 'LawyerController@storeSignupCode');
-        $api->post('lawyerLoginCode', 'LawyerController@storeLoginCode');
-        $api->post('lawyerSignup', 'LawyerController@signup');
-    });
-    
-    $api->post('product', 'ProductController@store');
-    $api->get('products', 'ProductController@index');
-    $api->get('skus', 'ProductSkuController@index');
-    $api->post('sku', 'ProductSkuController@store');
+    $api->post('/signupCode', 'VerifyCodeController@storeSignupCode');
+    $api->post('/loginCode', 'VerifyCodeController@storeLoginCode');
+    $api->post('/signup', 'AuthController@signup');
+    $api->post('/loginByPassword', 'AuthController@loginByPassword');
+    $api->post('/loginByCode', 'AuthController@loginByCode');
+});
 
-    $api->group([
-        'middleware' => 'bindings',
-    ], function($api){
-        $api->patch('sku/{sku}', 'ProductSkuController@update');
-        $api->delete('sku/{sku}', 'ProductSkuController@delete');
+//律师端路由
+$api->version('v1', [
+    'namespace' =>'App\Http\Controllers\Lawyer',
+    'prefix' => 'lawyer',
+    'middleware' => 'api'
+], function($api){
+    //注册相关
+    $api->post('/signupCode', 'LawyerController@storeSignupCode');
+    $api->post('/signup', 'LawyerController@signup');
+    //登录相关
+    $api->post('/loginCode', 'LawyerController@storeLoginCode');
+    $api->post('/loginByPassword', 'LawyerController@loginByPassword');
+    $api->post('/loginByCode', 'LawyerController@loginByCode');
+    
+    $api->group(['middleware' => 'auth:lawyer'], function ($api) {
+        $api->post('/logout', 'LawyerController@logout');
+        
+        $api->get('/info', 'LawyerController@getInfo');
+        $api->patch('/info/{phone}', 'LawyerController@updateInfo');
+        $api->post('/avatar', 'LawyerController@postAvatar');
+       
+        $api->post('/product', 'ProductController@store');
+        $api->get('/products', 'ProductController@index');
+        
+        $api->get('/skus', 'ProductSkuController@index');
+        $api->post('/sku', 'ProductSkuController@store');
+        $api->patch('/sku/{sku}', 'ProductSkuController@update');
+        $api->delete('/sku/{sku}', 'ProductSkuController@delete');
     });
+
+    $api->get('/allProvinces', 'AreaController@getAllProvinces');
+    $api->get('/cities', 'AreaController@getCitiesByProvinceId');
+    $api->get('/areas', 'AreaController@getAreasByCityId');
+});
+
+//管理端路由
+$api->version('v1', [
+    'namespace' =>'Admin',
+    'prefix' => 'admin'
+], function($api){
+    
 });

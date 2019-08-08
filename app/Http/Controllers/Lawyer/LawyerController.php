@@ -1,15 +1,33 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Lawyer;
 
 use App\Http\Requests\Api\LawyerSignupCodeRequest;
 use App\Http\Requests\Api\LawyerLoginCodeRequest;
 use App\Http\Requests\Api\AuthCodeRequest;
 use App\Models\Lawyer;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
+use App\Handlers\ImageUploadHandler;
+use Cblink\Region\Area;
 
 class LawyerController extends Controller
 {
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_PASS = 'pass';
+    const STATUS_FAILED = 'failed';
+    const STATUS_LOCKED = 'locked';
+
+    public static $statusMap = [
+        self::STATUS_DRAFT => '草稿',
+        self::STATUS_PROCESSING => '审核中',
+        self::STATUS_PASS => '通过',
+        self::STATUS_FAILED => '失败',
+        self::STATUS_LOCKED => '锁定',
+    ];
+
+    //注册验证码
     public function storeSignupCode(LawyerSignupCodeRequest $request)
     {
         $phone = $request->phone;
@@ -35,7 +53,7 @@ class LawyerController extends Controller
         return $this->response->created();
     }
 
-    //获取验证码
+    //登录验证码
     public function storeLoginCode(LawyerLoginCodeRequest $request)
     {
         $phone = $request->phone;
@@ -77,7 +95,7 @@ class LawyerController extends Controller
         
         $lawyer = Lawyer::create([
             'phone' => $request->phone,
-            'status' => 1
+            'status' => self::STATUS_DRAFT
         ]);
         
         // 清除缓存
@@ -134,13 +152,56 @@ class LawyerController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'success']);
     }
 
     //获取律师信息
     public function getInfo()
     {
-        return response()->json(auth('lawyer')->user());
+        $user = auth()->user();
+        $areaText = '';
+        if ($user->province){
+            $areaText .= Area::where('id', $user->province)->first()->name.'/';
+        }
+        if ($user->city){
+            $areaText .= Area::where('id', $user->city)->first()->name.'/';
+        }
+        if ($user->district){
+            $areaText .= Area::where('id', $user->district)->first()->name;
+        }
+        $user->areaText = $areaText;
+        return response()->json($user);
+    }
+
+    //更新律师信息
+    public function updateInfo(Request $request, $phone)
+    {
+        $lawyer = Lawyer::where('phone', $phone)->first();
+
+        if ($lawyer){
+            $lawyer->update([
+                'real_name'=>$request->name,
+                'law_number'=>$request->lawNumber,
+                'org'=>$request->org,
+                'address'=>$request->address,
+                'province'=>$request->area[0],
+                'city'=>$request->area[1],
+                'district'=>count($request->area)=== 3 ? $request->area[2] : null,
+                'avatar'=>$request->avatar,
+                'status'=> self::STATUS_PROCESSING
+            ]);
+        }
+        
+        return $this->response->noContent();
+    }
+
+    //上传律师头像
+    public function postAvatar(Request $request)
+    {
+        $uploader = new ImageUploadHandler();
+        $file = $request->file('file');
+        $result = $uploader->save($file, '/image/lawyer/avatar', auth()->user()->id);
+        return response()->json($result);
     }
 
     //返回token
@@ -152,4 +213,5 @@ class LawyerController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
 }
