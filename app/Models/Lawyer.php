@@ -17,6 +17,12 @@ class Lawyer extends Authenticatable implements JWTSubject
         return $this->hasMany(Product::class);
     }
 
+    //审核表
+    public function LawyerChecks()
+    {
+        return $this->hasMany(LawyerCheck::class);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -24,7 +30,6 @@ class Lawyer extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        // return ['role' => 'lawyer'];
         return [];
     }
 }

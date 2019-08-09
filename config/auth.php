@@ -49,6 +49,11 @@ return [
         'lawyer' => [
             'driver' => 'jwt',
             'provider' => 'lawyers',
+        ],
+
+        'admin' => [
+            'driver' => 'jwt',
+            'provider' => 'sys_users'
         ]
     ],
 
@@ -82,6 +87,11 @@ return [
         'lawyers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Lawyer::class,
+        ],
+
+        'sys_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SysUser::class,
         ]
     ],
 

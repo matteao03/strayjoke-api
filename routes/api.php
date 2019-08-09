@@ -67,8 +67,16 @@ $api->version('v1', [
 
 //管理端路由
 $api->version('v1', [
-    'namespace' =>'Admin',
+    'namespace' =>'App\Http\Controllers\Admin',
     'prefix' => 'admin'
 ], function($api){
-    
+    //登录相关
+    $api->post('/login', 'AuthController@login');
+
+    $api->group(['middleware' => 'auth:admin'], function ($api) {
+        $api->get('/info', 'AuthController@getInfo');
+        $api->get('/lawyers', 'LawyerController@index');
+        $api->post('/lawyer/check', 'LawyerController@check');
+        $api->get('/lawyerChecks', 'LawyerController@checkIndex');
+    });
 });
