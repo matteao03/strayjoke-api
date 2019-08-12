@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\Web;
 
 use Dingo\Api\Http\FormRequest as BaseFormRequest;
 

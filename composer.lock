@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "181fa9fe74ded5ee0b947ce98bcb95b7",
+    "content-hash": "5bf5875a43fb65feb927069ad6897128",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4842,6 +4842,124 @@
                 "validate"
             ],
             "time": "2018-12-25T11:19:39+00:00"
+        },
+        {
+            "name": "yansongda/pay",
+            "version": "v2.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yansongda/pay.git",
+                "reference": "f036769e9492e7ee659a1d011516d3e1036b1d74"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yansongda/pay/zipball/f036769e9492e7ee659a1d011516d3e1036b1d74",
+                "reference": "f036769e9492e7ee659a1d011516d3e1036b1d74",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-openssl": "*",
+                "ext-simplexml": "*",
+                "monolog/monolog": "^1.23",
+                "php": ">=7.1.3",
+                "symfony/event-dispatcher": "^4.0",
+                "symfony/http-foundation": "^4.0",
+                "yansongda/supports": "^1.8"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2",
+                "phpunit/phpunit": "^6.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yansongda\\Pay\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "yansongda",
+                    "email": "me@yansongda.cn"
+                }
+            ],
+            "description": "专注 Alipay 和 WeChat 的支付扩展包",
+            "keywords": [
+                "alipay",
+                "pay",
+                "wechat"
+            ],
+            "time": "2019-07-20T04:26:59+00:00"
+        },
+        {
+            "name": "yansongda/supports",
+            "version": "v1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yansongda/supports.git",
+                "reference": "830b61b0da2c6b0413a8d016903507542b322de0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yansongda/supports/zipball/830b61b0da2c6b0413a8d016903507542b322de0",
+                "reference": "830b61b0da2c6b0413a8d016903507542b322de0",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2",
+                "monolog/monolog": "^1.23",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "predis/predis": "^1.1"
+            },
+            "suggest": {
+                "predis/predis": "Allows to use throttle feature"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yansongda\\Supports\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "yansongda",
+                    "email": "me@yansongda.cn"
+                }
+            ],
+            "description": "common components",
+            "keywords": [
+                "Guzzle",
+                "array",
+                "collection",
+                "config",
+                "http",
+                "support",
+                "throttle"
+            ],
+            "time": "2019-06-05T05:08:48+00:00"
         }
     ],
     "packages-dev": [
