@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Lawyer;
+namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -12,7 +12,7 @@ class ProductController extends Controller
     //列表
     public function index(Request $request)
     {
-        $products = auth()->user()->products;
+        $products = Product::all();
         return $this->response->collection($products, new ProductTransformer());
     }
 

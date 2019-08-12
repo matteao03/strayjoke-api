@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\Web;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class LawyerSignupCodeRequest extends FormRequest
+class LoginCodeRequest extends FormRequest
 {
     /**
      * 验证规则
@@ -16,7 +14,6 @@ class LawyerSignupCodeRequest extends FormRequest
             'phone' => [
                 'required',
                 'regex:/^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199)\d{8}$/',
-                'unique:lawyers,phone'
             ]
         ];
     }
@@ -31,7 +28,6 @@ class LawyerSignupCodeRequest extends FormRequest
         return [
             'phone.required' => '手机号不能为空',
             'phone.regex'  => '手机号格式不正确',
-            'phone.unique'  => '手机号已注册，请登录或找回密码',
         ];
     }
 }

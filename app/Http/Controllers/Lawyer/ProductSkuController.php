@@ -18,8 +18,17 @@ class ProductSkuController extends Controller
     public function store(Request $request)
     {
         ProductSku::create([
-
+            'title' => 'ss',
+            'period_unit' => $request->unit,
+            'period_value' => $request->period,
+            'description' => $request->desc,
+            'price' => (int)$request->price,
+            'on_sale' => $request->status,
+            'product_id' => $request->product_id,
+            'stock' => 100
         ]);
+
+        return $this->response->noContent();
     }
 
     //更新

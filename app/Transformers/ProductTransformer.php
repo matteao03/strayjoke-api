@@ -7,6 +7,8 @@ use League\Fractal\TransformerAbstract;
 
 class ProductTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = ['skus', 'lawyer'];
+
     public function transform(Product $product)
     {
         return [
@@ -19,5 +21,14 @@ class ProductTransformer extends TransformerAbstract
             'updated_at' => (string) $product->updated_at,
         ];
     }
-}
 
+    public function includeSkus(Product $product)
+    {
+        return $this->collection($product->skus, new ProductSkuTransformer());
+    }
+    
+    public function includeLawyer(Product $product)
+    {
+        return $this->item($product->lawyer, new LawyerTransformer());
+    }
+}

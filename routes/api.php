@@ -21,13 +21,18 @@ $api = app('Dingo\Api\Routing\Router');
 
 //web端路由
 $api->version('v1', [
-    'namespace' =>'App\Http\Controllers\Web'
+    'namespace' =>'App\Http\Controllers\Web',
+    'middleware' => 'api'
 ], function($api){
     $api->post('/signupCode', 'VerifyCodeController@storeSignupCode');
     $api->post('/loginCode', 'VerifyCodeController@storeLoginCode');
     $api->post('/signup', 'AuthController@signup');
     $api->post('/loginByPassword', 'AuthController@loginByPassword');
     $api->post('/loginByCode', 'AuthController@loginByCode');
+
+    $api->get('/products', 'ProductController@index');
+    $api->get('/skus', 'ProductSkuController@index');
+    $api->get('/sku/{sku}', 'ProductSkuController@detail');
 });
 
 //律师端路由
@@ -53,6 +58,7 @@ $api->version('v1', [
        
         $api->post('/product', 'ProductController@store');
         $api->get('/products', 'ProductController@index');
+        $api->patch('/product/{product}', 'ProductController@update');
         
         $api->get('/skus', 'ProductSkuController@index');
         $api->post('/sku', 'ProductSkuController@store');

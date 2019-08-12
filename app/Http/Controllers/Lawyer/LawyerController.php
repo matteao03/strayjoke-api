@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Lawyer;
 
-use App\Http\Requests\Api\LawyerSignupCodeRequest;
-use App\Http\Requests\Api\LawyerLoginCodeRequest;
-use App\Http\Requests\Api\AuthCodeRequest;
+use App\Http\Requests\Lawyer\SignupCodeRequest;
+use App\Http\Requests\Lawyer\LoginCodeRequest;
+use App\Http\Requests\Lawyer\AuthCodeRequest;
 use App\Models\Lawyer;
+use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use App\Handlers\ImageUploadHandler;
@@ -13,22 +14,8 @@ use Cblink\Region\Area;
 
 class LawyerController extends Controller
 {
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PROCESSING = 'processing';
-    const STATUS_PASS = 'pass';
-    const STATUS_FAILED = 'failed';
-    const STATUS_LOCKED = 'locked';
-
-    public static $statusMap = [
-        self::STATUS_DRAFT => '草稿',
-        self::STATUS_PROCESSING => '审核中',
-        self::STATUS_PASS => '通过',
-        self::STATUS_FAILED => '失败',
-        self::STATUS_LOCKED => '锁定',
-    ];
-
     //注册验证码
-    public function storeSignupCode(LawyerSignupCodeRequest $request)
+    public function storeSignupCode(SignupCodeRequest $request)
     {
         $phone = $request->phone;
         
@@ -54,7 +41,7 @@ class LawyerController extends Controller
     }
 
     //登录验证码
-    public function storeLoginCode(LawyerLoginCodeRequest $request)
+    public function storeLoginCode(LoginCodeRequest $request)
     {
         $phone = $request->phone;
         
@@ -93,10 +80,30 @@ class LawyerController extends Controller
             return $this->response->errorUnauthorized('验证码错误');
         }
         
-        $lawyer = Lawyer::create([
-            'phone' => $request->phone,
-            'status' => self::STATUS_DRAFT
-        ]);
+        $lawyer = \DB::transaction(function() use ($request) {
+            $lawyer = Lawyer::create([
+                'phone' => $request->phone,
+                'status' => Lawyer::STATUS_DRAFT
+            ]);
+
+            Product::create([
+                'title'=> Product::TYPE_PERSON,
+                'on_sale'=> Product::ON_SALE,
+                'description'=> '',
+                'lawyer_id'=> $lawyer->id,
+                'price' => 0
+            ]);
+
+            Product::create([
+                'title'=> Product::TYPE_ORG,
+                'on_sale'=> Product::ON_SALE,
+                'description'=> '',
+                'lawyer_id'=> $lawyer->id,
+                'price' => 0
+            ]);
+            
+            return $lawyer;
+        });
         
         // 清除缓存
         Cache::forget('lawyerSignupCode:'.$request->phone);
@@ -188,7 +195,7 @@ class LawyerController extends Controller
                 'city'=>$request->area[1],
                 'district'=>count($request->area)=== 3 ? $request->area[2] : null,
                 'avatar'=>$request->avatar,
-                'status'=> self::STATUS_PROCESSING
+                'status'=> Lawyer::STATUS_PROCESSING
             ]);
         }
         

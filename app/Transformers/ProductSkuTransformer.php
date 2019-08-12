@@ -11,6 +11,7 @@ class ProductSkuTransformer extends TransformerAbstract
     {
         return [
             'id' => $sku->id,
+            'title' => $sku->title,
             'desc' => $sku->description,
             'status' => $sku->on_sale,
             'price' => $sku->price,

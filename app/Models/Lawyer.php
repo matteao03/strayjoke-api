@@ -7,6 +7,20 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Lawyer extends Authenticatable implements JWTSubject
 {
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_PASS = 'pass';
+    const STATUS_FAILED = 'failed';
+    const STATUS_LOCKED = 'locked';
+
+    public static $statusMap = [
+        self::STATUS_DRAFT => '草稿',
+        self::STATUS_PROCESSING => '审核中',
+        self::STATUS_PASS => '通过',
+        self::STATUS_FAILED => '失败',
+        self::STATUS_LOCKED => '锁定',
+    ];
+
     protected $fillable = [
         'real_name', 'city', 'district', 'address', 'phone', 'avatar', 'law_number', 'status', 'province', 'org'
     ];
