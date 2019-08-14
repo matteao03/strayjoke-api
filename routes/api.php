@@ -33,9 +33,12 @@ $api->version('v1', [
     $api->get('/products', 'ProductController@index');
     $api->get('/skus', 'ProductSkuController@index');
     $api->get('/sku/{sku}', 'ProductSkuController@detail');
-
-    $api->post('/order', 'OrderController@store');
-    $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);
+    
+    $api->group(['middleware' => 'auth:user'], function ($api) {
+        $api->get('/info', 'AuthController@getInfo');
+        $api->post('/order', 'OrderController@store');
+        $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);
+    });
 });
 
 //律师端路由

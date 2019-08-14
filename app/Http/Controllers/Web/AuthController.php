@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
-use App\Http\Requests\Api\AuthCodeRequest;
-use App\Http\Requests\Api\AuthPasswordRequest;
-use App\Http\Requests\Api\AuthSignupRequest;
+use App\Http\Requests\Web\AuthCodeRequest;
+use App\Http\Requests\Web\AuthPasswordRequest;
+use App\Http\Requests\Web\AuthSignupRequest;
 
 class AuthController extends Controller
 {
@@ -85,6 +85,13 @@ class AuthController extends Controller
         $token = auth()->login($user);
         
         return $this->respondWithToken($token);
+    }
+
+    //获取用户信息
+    public function getInfo()
+    {
+        $user = auth()->user();
+        return response()->json(['name'=>'ceshi']);
     }
 
     //退出
