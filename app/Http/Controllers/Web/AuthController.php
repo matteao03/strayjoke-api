@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\Web\AuthCodeRequest;
 use App\Http\Requests\Web\AuthPasswordRequest;
 use App\Http\Requests\Web\AuthSignupRequest;
+use App\Transformers\UserTransformer;
 
 class AuthController extends Controller
 {
@@ -91,7 +92,7 @@ class AuthController extends Controller
     public function getInfo()
     {
         $user = auth()->user();
-        return response()->json(['name'=>'ceshi']);
+        return $this->response->item($user, new UserTransformer());
     }
 
     //退出
