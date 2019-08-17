@@ -20,5 +20,4 @@ class ProductSkuController extends Controller
     {
         return $this->response->item($sku, new ProductSkuTransformer());
     }
-
 }

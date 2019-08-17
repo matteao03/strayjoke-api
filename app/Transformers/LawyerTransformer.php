@@ -5,6 +5,7 @@ namespace App\Transformers;
 use App\Models\Lawyer;
 use League\Fractal\TransformerAbstract;
 use Cblink\Region\Area;
+use Dingo\Api\Auth\Auth;
 
 class LawyerTransformer extends TransformerAbstract
 {
@@ -34,7 +35,7 @@ class LawyerTransformer extends TransformerAbstract
             'comment' => $lawyer->comment,
             'createdTime' => (string) $lawyer->created_at,
             'updatedTime' => (string) $lawyer->updated_at,
-
+            'isCollect' => boolval(app(Auth::class)->user()->collectLawyers()->find($lawyer->id))
         ];
     }
 }

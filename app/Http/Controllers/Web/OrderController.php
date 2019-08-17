@@ -7,6 +7,7 @@ use App\Http\Requests\Web\OrderRequest;
 use App\Models\Order;
 use App\Models\ProductSku;
 use App\Models\User;
+use App\Transformers\OrderTransformer;
 
 class OrderController extends Controller
 {
@@ -32,5 +33,22 @@ class OrderController extends Controller
         });
 
         return $order;
+    }
+
+    public function index(Request $request)
+    {
+        $query = $request->query('status');
+        if ($query === 'all'){
+            $orders = auth()->user()->orders;
+        } else if ($query === 'nopay') {
+            $orders = auth()->user()->orders()->whereNull('paid_at')->get();
+        } else if ($query === 'paid') {
+            $orders = auth()->user()->orders()->whereNotNull('paid_at')->get();
+        } else if ($query === 'nocomment') {
+            $orders = auth()->user()->orders()->whereNotNull('paid_at')->get();
+        } else if ($query === 'refund') {
+            $orders = auth()->user()->orders()->whereNotNull('refund_status')->get();
+        }
+        return $this->response->collection($orders, new OrderTransformer());
     }
 }

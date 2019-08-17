@@ -37,7 +37,14 @@ $api->version('v1', [
     $api->group(['middleware' => 'auth:user'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
         $api->post('/order', 'OrderController@store');
+        $api->get('/orders', 'OrderController@index');
         $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);
+        $api->post('/skus/{sku}/collect', 'CollectController@collectSku');
+        $api->post('/skus/{sku}/uncollect', 'CollectController@uncollectSku');
+        $api->post('/lawyers/{lawyer}/collect', 'CollectController@collectLawyer');
+        $api->post('/lawyers/{lawyer}/uncollect', 'CollectController@uncollectLawyer');
+        $api->get('/collectLawyers', 'CollectController@indexLawyers');
+        $api->get('/collectSkus', 'CollectController@indexSkus');
     });
 });
 
