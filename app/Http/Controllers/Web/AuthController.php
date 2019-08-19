@@ -8,6 +8,7 @@ use App\Http\Requests\Web\AuthCodeRequest;
 use App\Http\Requests\Web\AuthPasswordRequest;
 use App\Http\Requests\Web\AuthSignupRequest;
 use App\Transformers\UserTransformer;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -93,6 +94,15 @@ class AuthController extends Controller
     {
         $user = auth()->user();
         return $this->response->item($user, new UserTransformer());
+    }
+
+    //更改用户名
+    public function updateName(Request $request)
+    {
+        $user = auth()->user();
+        $a = $request->name;
+        $user->update(['nick_name' => $request->name]);
+        return $this->response->noContent();
     }
 
     //退出
