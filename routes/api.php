@@ -97,6 +97,7 @@ $api->version('v1', [
 
     $api->group(['middleware' => 'auth:admin'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
+        $api->get('/users', 'UserController@index');
         $api->get('/lawyers', 'LawyerController@index');
         $api->post('/lawyer/check', 'LawyerController@check');
         $api->get('/lawyerChecks', 'LawyerController@checkIndex');
