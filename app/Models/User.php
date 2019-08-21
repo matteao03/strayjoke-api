@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class User extends Authenticatable implements JWTSubject
 {
     protected $fillable = [
-        'nick_name', 'phone', 'birth', 'password',
+        'nick_name', 'phone', 'birth', 'password', 'avatar'
     ];
     
     protected $hidden = [

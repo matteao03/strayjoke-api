@@ -12,8 +12,8 @@ class OrderTransformer extends TransformerAbstract
         return [
             'id' => $order->id,
             'amount' => $order->total_amount,
-            'created_at' => (string) $order->created_at,
-            'updated_at' => (string) $order->updated_at,
+            'created_at' => $order->created_at,
+            'updated_at' => $order->updated_at,
         ];
     }
 }

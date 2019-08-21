@@ -33,8 +33,8 @@ class LawyerTransformer extends TransformerAbstract
             'areaText' => $areaText,
             'address' => $lawyer->address,
             'comment' => $lawyer->comment,
-            'createdTime' => (string) $lawyer->created_at,
-            'updatedTime' => (string) $lawyer->updated_at,
+            'createdTime' => $lawyer->created_at,
+            'updatedTime' => $lawyer->updated_at,
             'isCollect' => boolval(app(Auth::class)->user()->collectLawyers()->find($lawyer->id))
         ];
     }

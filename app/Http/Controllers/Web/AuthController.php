@@ -9,6 +9,7 @@ use App\Http\Requests\Web\AuthPasswordRequest;
 use App\Http\Requests\Web\AuthSignupRequest;
 use App\Transformers\UserTransformer;
 use Illuminate\Http\Request;
+use App\Handlers\ImageUploadHandler;
 
 class AuthController extends Controller
 {
@@ -100,10 +101,34 @@ class AuthController extends Controller
     public function updateName(Request $request)
     {
         $user = auth()->user();
-        $a = $request->name;
         $user->update(['nick_name' => $request->name]);
         return $this->response->noContent();
     }
+
+    //更改生日
+    public function updateBrith(Request $request)
+    {
+        $user = auth()->user();
+        $user->update(['birth' => $request->birth]);
+        return $this->response->noContent();
+    }
+
+     //上传用户头像
+     public function updateAvatar(Request $request)
+     {
+        $uploader = new ImageUploadHandler();
+        $user = auth()->user();
+        $image= $request->avatar;
+        $path = public_path().'/image/user/avatar';
+        $imageName = $user->id.'.png';
+
+        if (!$uploader->saveBase64($image, $path, $imageName)){
+            return $this->response->errorInternal();
+        } 
+        
+        $user->update(['avatar' => '/image/user/avatar/'.$imageName]);
+        return $this->response->noContent();
+     }
 
     //退出
     public function logout()

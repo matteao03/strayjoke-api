@@ -15,7 +15,7 @@ class LawyerCheckTransformer extends TransformerAbstract
             'checkedBy' => SysUser::find($lawyerCheck->checked_by),
             'status' => $lawyerCheck->status,
             'content' => $lawyerCheck->content,
-            'updatedTime' => (string) $lawyerCheck->updated_at,
+            'updatedTime' => $lawyerCheck->updated_at,
 
         ];
     }

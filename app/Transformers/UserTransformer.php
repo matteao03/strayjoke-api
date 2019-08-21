@@ -13,7 +13,7 @@ class UserTransformer extends TransformerAbstract
             'id' => $user->id,
             'nickName' => $user->nick_name,
             'phone' => $user->phone,
-            'avatar' => $user->avatar,
+            'avatar' => "http://api.strayjoke.test".$user->avatar,
             'birth' => (string) $user->birth,
         ];
     }

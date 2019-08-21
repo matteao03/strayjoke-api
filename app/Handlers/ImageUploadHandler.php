@@ -28,4 +28,25 @@ class ImageUploadHandler
             ]
         ];
     }
+
+    public function saveBase64($base64, $path, $filename)
+    {
+        if (strstr($base64, ",")){
+            $fileArr = explode(',',$base64);
+            $file = $fileArr[1];
+        }
+        $path = public_path().'/image/user/avatar';
+        if (!is_dir($path)){ //判断目录是否存在 不存在就创建
+            mkdir($path, 777, true);    
+        }
+
+        $fileSrc= $path."/". $filename; //图片名字
+        if (file_exists($fileSrc)){
+            unlink($fileSrc); //删除图片
+        }
+
+        $r = file_put_contents($fileSrc, base64_decode($file));//返回的是字节数
+
+        return $r ? true:false;
+    }
 }

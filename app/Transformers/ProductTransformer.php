@@ -18,8 +18,8 @@ class ProductTransformer extends TransformerAbstract
             'isSale' => $product->on_sale,
             'price' => $product->price,
             'review' => $product->review_count,
-            'created_at' => (string) $product->created_at,
-            'updated_at' => (string) $product->updated_at,
+            'created_at' => $product->created_at,
+            'updated_at' => $product->updated_at,
         ];
     }
 

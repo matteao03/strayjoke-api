@@ -37,6 +37,8 @@ $api->version('v1', [
     $api->group(['middleware' => 'auth:user'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
         $api->patch('auth/name', 'AuthController@updateName');
+        $api->patch('auth/birth', 'AuthController@updateBrith');
+        $api->patch('auth/avatar', 'AuthController@updateAvatar');
         $api->post('/order', 'OrderController@store');
         $api->get('/orders', 'OrderController@index');
         $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);

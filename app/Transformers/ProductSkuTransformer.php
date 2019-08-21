@@ -17,8 +17,8 @@ class ProductSkuTransformer extends TransformerAbstract
             'price' => $sku->price,
             'period' => $sku->period_value,
             'unit' => $sku->period_unit,
-            'created_at' => (string) $sku->created_at,
-            'updated_at' => (string) $sku->updated_at,
+            'created_at' => $sku->created_at,
+            'updated_at' => $sku->updated_at,
         ];
     }
 }
