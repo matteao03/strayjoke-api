@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Transformers;
+namespace App\Transformers\Admin;
 
 use App\Models\ProductSku;
 use League\Fractal\TransformerAbstract;
@@ -17,7 +17,7 @@ class ProductSkuTransformer extends TransformerAbstract
             'price' => $sku->price,
             'period' => $sku->period_value,
             'unit' => $sku->period_unit,
-            'created_at' =>(string)$sku->created_at,
+            'created_at' => (string)$sku->created_at,
             'updated_at' => (string)$sku->updated_at,
         ];
     }

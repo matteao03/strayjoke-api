@@ -174,6 +174,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        
+        //custom providers
         App\Providers\EasySmsServiceProvider::class,
         Cblink\Region\RegionServiceProvider::class,
         

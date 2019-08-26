@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Transformers;
+namespace App\Transformers\Admin;
 
 use App\Models\LawyerCheck;
 use App\Models\SysUser;

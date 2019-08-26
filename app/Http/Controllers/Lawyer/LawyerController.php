@@ -165,19 +165,19 @@ class LawyerController extends Controller
     //获取律师信息
     public function getInfo()
     {
-        $user = auth()->user();
+        $lawyer = auth('lawyer')->user();
         $areaText = '';
-        if ($user->province){
-            $areaText .= Area::where('id', $user->province)->first()->name.'/';
+        if ($lawyer->province){
+            $areaText .= Area::where('id', $lawyer->province)->first()->name.'/';
         }
-        if ($user->city){
-            $areaText .= Area::where('id', $user->city)->first()->name.'/';
+        if ($lawyer->city){
+            $areaText .= Area::where('id', $lawyer->city)->first()->name.'/';
         }
-        if ($user->district){
-            $areaText .= Area::where('id', $user->district)->first()->name;
+        if ($lawyer->district){
+            $areaText .= Area::where('id', $lawyer->district)->first()->name;
         }
-        $user->areaText = $areaText;
-        return response()->json($user);
+        $lawyer->areaText = $areaText;
+        return response()->json($lawyer);
     }
 
     //更新律师信息

@@ -34,7 +34,7 @@ $api->version('v1', [
     $api->get('/skus', 'ProductSkuController@index');
     $api->get('/sku/{sku}', 'ProductSkuController@detail');
     
-    $api->group(['middleware' => 'auth:user'], function ($api) {
+    $api->group(['middleware' => 'refreshToken:user'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
         $api->patch('auth/name', 'AuthController@updateName');
         $api->patch('auth/birth', 'AuthController@updateBrith');
@@ -65,7 +65,7 @@ $api->version('v1', [
     $api->post('/loginByPassword', 'LawyerController@loginByPassword');
     $api->post('/loginByCode', 'LawyerController@loginByCode');
     
-    $api->group(['middleware' => 'auth:lawyer'], function ($api) {
+    // $api->group(['middleware' => 'refreshToken:lawyer'], function ($api) {
         $api->post('/logout', 'LawyerController@logout');
         
         $api->get('/info', 'LawyerController@getInfo');
@@ -80,7 +80,7 @@ $api->version('v1', [
         $api->post('/sku', 'ProductSkuController@store');
         $api->patch('/sku/{sku}', 'ProductSkuController@update');
         $api->delete('/sku/{sku}', 'ProductSkuController@delete');
-    });
+    // });
 
     $api->get('/allProvinces', 'AreaController@getAllProvinces');
     $api->get('/cities', 'AreaController@getCitiesByProvinceId');
@@ -95,11 +95,13 @@ $api->version('v1', [
     //登录相关
     $api->post('/login', 'AuthController@login');
 
-    $api->group(['middleware' => 'auth:admin'], function ($api) {
+    $api->group(['middleware' => 'refreshToken:admin'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
         $api->get('/users', 'UserController@index');
         $api->get('/lawyers', 'LawyerController@index');
         $api->post('/lawyer/check', 'LawyerController@check');
         $api->get('/lawyerChecks', 'LawyerController@checkIndex');
+        $api->get('/products', 'ProductController@index');
+        $api->get('/orders', 'OrderController@index');
     });
 });

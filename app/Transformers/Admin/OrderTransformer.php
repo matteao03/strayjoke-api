@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Transformers;
+namespace App\Transformers\Admin;
 
 use App\Models\Order;
+use App\Models\User;
 use League\Fractal\TransformerAbstract;
 
 class OrderTransformer extends TransformerAbstract
@@ -13,8 +14,9 @@ class OrderTransformer extends TransformerAbstract
             'id' => $order->id,
             'no' => $order->no,
             'amount' => $order->total_amount,
-            'createdTime' => $order->created_at,
-            'updatedTime' => $order->updated_at,
+            'createdTime' => (string)$order->created_at,
+            'updatedTime' => (string)$order->updated_at,
+            'user' => User::find($order->user_id)->nick_name
         ];
     }
 }

@@ -12,9 +12,13 @@ class LawyerController extends Controller
 {
     public function index(Request $request)
     {
-        $lawyers = Lawyer::all();
+        if ($name = $request->query('name')){
+            $lawyers = Lawyer::where('real_name', 'like', '%'.$name.'%' )->paginate($request->query('size'));
+        } else {
+            $lawyers = Lawyer::paginate($request->query('size'));
+        }
 
-        return $this->response->collection($lawyers, new LawyerTransformer());
+        return $this->response->paginator($lawyers, new LawyerTransformer());
     }
 
     public function check(Request $request)
