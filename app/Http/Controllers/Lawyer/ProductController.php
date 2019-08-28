@@ -12,7 +12,7 @@ class ProductController extends Controller
     //列表
     public function index(Request $request)
     {
-        $products = auth()->user()->products;
+        $products = auth('lawyer')->user()->products;
         return $this->response->collection($products, new ProductTransformer());
     }
 

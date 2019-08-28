@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Lawyer;
 
+use Exception;
 use App\Http\Requests\Lawyer\SignupCodeRequest;
 use App\Http\Requests\Lawyer\LoginCodeRequest;
 use App\Http\Requests\Lawyer\AuthCodeRequest;
@@ -10,7 +11,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use App\Handlers\ImageUploadHandler;
-use Cblink\Region\Area;
+use App\Transformers\Lawyer\LawyerTransformer;
 
 class LawyerController extends Controller
 {
@@ -31,7 +32,7 @@ class LawyerController extends Controller
             ]);
         } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
             $message = $exception->getException('aliyun')->getMessage();
-            return $this->response->errorInternal($message ?: '');
+            return $this->response->errorInternal('短信发送失败，请重试');
         }
         
         //缓存
@@ -44,7 +45,6 @@ class LawyerController extends Controller
     public function storeLoginCode(LoginCodeRequest $request)
     {
         $phone = $request->phone;
-        
         // 生成随机数
         $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
         
@@ -57,7 +57,7 @@ class LawyerController extends Controller
             ]);
         } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
             $message = $exception->getException('aliyun')->getMessage();
-            return $this->response->errorInternal($message ?: '');
+            return $this->response->errorInternal('短信发送失败，请重试');
         }
         
         //缓存
@@ -120,7 +120,7 @@ class LawyerController extends Controller
         $credentials = request(['phone', 'password']);
 
         if (! $token = auth('lawyer')->attempt($credentials)) {
-            return response()->errorUnauthorized('用户名或密码错误');
+            return $this->response->errorUnauthorized('用户名或密码错误');
         }
 
         return $this->respondWithToken($token);
@@ -137,12 +137,12 @@ class LawyerController extends Controller
         
         if (!hash_equals($verifyData, $request->verifyCode)) {
             // 401
-            return $this->response->errorUnauthorized('验证码错误');
+            return $this->response->error('验证码错误', 422);
         }
         
         $lawyer = Lawyer::where('phone', $request->phone)->first();
         if (!$lawyer){
-            return $this->response->error('', 401);
+            return $this->response->error('当前手机号未注册', 422);
         }
         // 清除缓存
         Cache::forget('loginCode:'.$request->phone);
@@ -150,34 +150,34 @@ class LawyerController extends Controller
         //自动登录
         $token = auth('lawyer')->login($lawyer);
         
-        
         return $this->respondWithToken($token);
     }
 
     //退出
     public function logout()
     {
-        auth()->logout();
+        try {
+            auth('lawyer')->logout();
+        } catch(Exception $e){
+            return $this->response->noContent();
+        }
 
-        return response()->json(['message' => 'success']);
+        return $this->response->noContent();
     }
 
     //获取律师信息
     public function getInfo()
     {
+        $payload = auth('lawyer')->payload();
         $lawyer = auth('lawyer')->user();
-        $areaText = '';
-        if ($lawyer->province){
-            $areaText .= Area::where('id', $lawyer->province)->first()->name.'/';
+        
+        try {
+            $lawyer = auth('lawyer')->userOrFail();
+        } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
+            $this->response->errorUnauthorized('会话过期，请重新登录');
         }
-        if ($lawyer->city){
-            $areaText .= Area::where('id', $lawyer->city)->first()->name.'/';
-        }
-        if ($lawyer->district){
-            $areaText .= Area::where('id', $lawyer->district)->first()->name;
-        }
-        $lawyer->areaText = $areaText;
-        return response()->json($lawyer);
+
+        return $this->response->item($lawyer, new LawyerTransformer());
     }
 
     //更新律师信息

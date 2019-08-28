@@ -14,6 +14,7 @@ class LoginCodeRequest extends FormRequest
             'phone' => [
                 'required',
                 'regex:/^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199)\d{8}$/',
+                'exists:lawyers,phone'
             ]
         ];
     }
@@ -28,6 +29,7 @@ class LoginCodeRequest extends FormRequest
         return [
             'phone.required' => '手机号不能为空',
             'phone.regex'  => '手机号格式不正确',
+            'phone.exists' => '当前手机号未注册'
         ];
     }
 }

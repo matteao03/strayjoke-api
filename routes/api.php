@@ -64,9 +64,9 @@ $api->version('v1', [
     $api->post('/loginCode', 'LawyerController@storeLoginCode');
     $api->post('/loginByPassword', 'LawyerController@loginByPassword');
     $api->post('/loginByCode', 'LawyerController@loginByCode');
+    $api->post('/logout', 'LawyerController@logout');
     
-    // $api->group(['middleware' => 'refreshToken:lawyer'], function ($api) {
-        $api->post('/logout', 'LawyerController@logout');
+    $api->group(['middleware' => 'refreshToken:lawyer'], function ($api) {
         
         $api->get('/info', 'LawyerController@getInfo');
         $api->patch('/info/{phone}', 'LawyerController@updateInfo');
@@ -80,7 +80,10 @@ $api->version('v1', [
         $api->post('/sku', 'ProductSkuController@store');
         $api->patch('/sku/{sku}', 'ProductSkuController@update');
         $api->delete('/sku/{sku}', 'ProductSkuController@delete');
-    // });
+
+        $api->get('/orders', 'OrderController@index');
+
+    });
 
     $api->get('/allProvinces', 'AreaController@getAllProvinces');
     $api->get('/cities', 'AreaController@getCitiesByProvinceId');
