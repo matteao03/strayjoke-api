@@ -41,4 +41,11 @@ class Product extends Model
     {
         return $this->belongsTo(Lawyer::class);
     }
+
+    // 与订单关联
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 }
