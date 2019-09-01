@@ -207,7 +207,7 @@ class LawyerController extends Controller
     {
         $uploader = new ImageUploadHandler();
         $file = $request->file('file');
-        $result = $uploader->save($file, '/image/lawyer/avatar', auth()->user()->id);
+        $result = $uploader->save($file, '/image/lawyer/avatar', auth('lawyer')->user()->id);
         return response()->json($result);
     }
 

@@ -13,6 +13,8 @@ class OrderTransformer extends TransformerAbstract
             'id' => $order->id,
             'no' => $order->no,
             'amount' => $order->total_amount,
+            'user' => $order->user->phone,
+            'sku' => $order->sku->title,
             'createdTime' => (string)$order->created_at,
             'updatedTime' => (string)$order->updated_at,
         ];

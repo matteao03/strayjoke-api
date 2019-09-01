@@ -64,6 +64,12 @@ class Order extends Model
         return $this->belongsTo(Product::class);
     }
 
+    //属于sku
+    public function sku()
+    {
+        return $this->belongsTo(ProductSku::class);
+    }
+
     public static function findAvailableNo()
     {
         // 订单流水号前缀
