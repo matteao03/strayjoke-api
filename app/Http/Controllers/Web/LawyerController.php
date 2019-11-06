@@ -11,7 +11,7 @@ class LawyerController extends Controller
     //收藏
     public function collect(Lawyer $lawyer)
     {
-        $user = auth()->user();
+        $user = auth('user')->user();
         if ($user->collectLawyers()->find($lawyer->id)) {
             return $this->response->noContent();
         }
@@ -24,7 +24,7 @@ class LawyerController extends Controller
     //取消收藏
     public function uncollect(Lawyer $lawyer)
     {
-        $user = auth()->user();
+        $user = auth('user')->user();
         $user->collectLawyers()->detach($lawyer);
 
         return $this->response->noContent();

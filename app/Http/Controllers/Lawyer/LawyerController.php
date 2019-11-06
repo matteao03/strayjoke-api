@@ -6,6 +6,9 @@ use Exception;
 use App\Http\Requests\Lawyer\SignupCodeRequest;
 use App\Http\Requests\Lawyer\LoginCodeRequest;
 use App\Http\Requests\Lawyer\AuthCodeRequest;
+use App\Http\Requests\Lawyer\AuthPasswordRequest;
+use App\Http\Requests\Lawyer\AuthForgetCodeRequest;
+use App\Http\Requests\Lawyer\ForgetCodeRequest;
 use App\Models\Lawyer;
 use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
@@ -66,13 +69,39 @@ class LawyerController extends Controller
         return $this->response->created();
     }
 
+     //获取重置验证码
+     public function storeForgetCode(ForgetCodeRequest $request)
+     {
+         $phone = $request->phone;
+         
+         // 生成随机数
+         $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
+         
+         try {
+             app('easysms')->send($phone, [
+                 'template' => 'SMS_170347373',
+                 'data' => [
+                     'code' => $code
+                 ],
+             ]);
+         } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
+             $message = $exception->getException('aliyun')->getMessage();
+             return $this->response->errorInternal($message ?: '');
+         }
+         
+         //缓存
+         Cache::put('forgetLawyerCode:'.$phone, $code, now()->addMinutes(5));
+         
+         return $this->response->created();
+     }
+
     //注册
     public function signup(AuthCodeRequest $request)
     {
         $verifyData = Cache::get('lawyerSignupCode:'.$request->phone);
         
         if (!$verifyData) {
-            return $this->response->error('验证码已失效', 422);
+            return $this->response->errorUnauthorized('验证码错误');
         }
         
         if (!hash_equals($verifyData, $request->verifyCode)) {
@@ -132,17 +161,17 @@ class LawyerController extends Controller
         $verifyData = Cache::get('lawyerLoginCode:'.$request->phone);
         
         if (!$verifyData) {
-            return $this->response->error('验证码已失效', 422);
+            return $this->response->errorUnauthorized('验证码错误');
         }
         
         if (!hash_equals($verifyData, $request->verifyCode)) {
             // 401
-            return $this->response->error('验证码错误', 422);
+            return $this->response->errorUnauthorized('验证码错误');
         }
         
         $lawyer = Lawyer::where('phone', $request->phone)->first();
         if (!$lawyer){
-            return $this->response->error('当前手机号未注册', 422);
+            return $this->response->errorUnauthorized('当前手机号未注册');
         }
         // 清除缓存
         Cache::forget('loginCode:'.$request->phone);
@@ -152,6 +181,57 @@ class LawyerController extends Controller
         
         return $this->respondWithToken($token);
     }
+
+    //验证找回密码
+    public function verifyForgetCode (AuthForgetCodeRequest $request)
+    {
+        $verifyData = Cache::get('forgetLawyerCode:'.$request->phone);
+        
+        
+        if (!$verifyData) {
+            //缓存
+            Cache::put('verifyForgetLawyerCode:'.$request->phone, 0, now()->addMinutes(5));
+            //401
+            return $this->response->errorUnauthorized('验证码已失效');
+        }
+        
+        if (!hash_equals($verifyData, $request->verifyCode)) {
+            //缓存
+            Cache::put('verifyForgetLawyerCode:'.$request->phone, 0, now()->addMinutes(5));
+            //401
+            return $this->response->errorUnauthorized('验证码错误');
+        }
+        
+        // 清除缓存
+        Cache::forget('forgetLawyerCode:'.$request->phone);
+        //缓存
+        Cache::put('verifyForgetLawyerCode:'.$request->phone, 1, now()->addMinutes(5));
+        
+        return $this->response->noContent();
+    }
+
+    //重置密码
+    public function resetPassword (AuthPasswordRequest $request)
+    {
+        $verifyData = Cache::get('verifyForgetLawyerCode:'.$request->phone);
+        
+        if (!$verifyData) {
+            return $this->response->errorUnauthorized('验证码已失效');
+        }
+        
+        $lawyer = Lawyer::where('phone', $request->phone)->first();
+        if ($lawyer){
+            $lawyer->password =  bcrypt($request->password);
+            $lawyer->save();
+            
+            return $this->response->noContent();
+        }
+
+        //清除缓存
+        Cache::forget('verifyForgetLawyerCode:'.$request->phone);
+        return $this->response->error('网络出错,请重新验证', 500);
+    }
+
 
     //退出
     public function logout()
@@ -217,7 +297,7 @@ class LawyerController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth('lawyer')->factory()->getTTL() * 60
         ]);
     }
 

@@ -27,7 +27,7 @@ class LawyerController extends Controller
         \DB::transaction(function() use ($request) {
             $lawyerId = $request->lawyer_id;
             $status = $request->status;
-            $checkBy = auth()->user()->id;
+            $checkBy = auth('admin')->user()->id;
 
             $lawyer = Lawyer::find($lawyerId);
             $lawyer->update(['status'=>$status]);

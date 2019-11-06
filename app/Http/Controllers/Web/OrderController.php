@@ -39,15 +39,15 @@ class OrderController extends Controller
     {
         $query = $request->query('status');
         if ($query === 'all'){
-            $orders = auth()->user()->orders;
+            $orders = auth('user')->user()->orders;
         } else if ($query === 'nopay') {
-            $orders = auth()->user()->orders()->whereNull('paid_at')->get();
+            $orders = auth('user')->user()->orders()->whereNull('paid_at')->get();
         } else if ($query === 'paid') {
-            $orders = auth()->user()->orders()->whereNotNull('paid_at')->get();
+            $orders = auth('user')->user()->orders()->whereNotNull('paid_at')->get();
         } else if ($query === 'nocomment') {
-            $orders = auth()->user()->orders()->whereNotNull('paid_at')->get();
+            $orders = auth('user')->user()->orders()->whereNotNull('paid_at')->get();
         } else if ($query === 'refund') {
-            $orders = auth()->user()->orders()->whereNotNull('refund_status')->get();
+            $orders = auth('user')->user()->orders()->whereNotNull('refund_status')->get();
         }
         return $this->response->collection($orders, new OrderTransformer());
     }
