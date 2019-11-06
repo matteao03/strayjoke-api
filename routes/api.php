@@ -26,6 +26,9 @@ $api->version('v1', [
 ], function($api){
     $api->post('/signupCode', 'VerifyCodeController@storeSignupCode');
     $api->post('/loginCode', 'VerifyCodeController@storeLoginCode');
+    $api->post('/forgetCode', 'VerifyCodeController@storeForgetCode');
+    $api->post('/verifyForgetCode', 'AuthController@verifyForgetCode');
+    $api->patch('/password', 'AuthController@resetPassword');
     $api->post('/signup', 'AuthController@signup');
     $api->post('/loginByPassword', 'AuthController@loginByPassword');
     $api->post('/loginByCode', 'AuthController@loginByCode');
@@ -64,6 +67,9 @@ $api->version('v1', [
     $api->post('/loginCode', 'LawyerController@storeLoginCode');
     $api->post('/loginByPassword', 'LawyerController@loginByPassword');
     $api->post('/loginByCode', 'LawyerController@loginByCode');
+    $api->post('/forgetCode', 'LawyerController@storeForgetCode');
+    $api->post('/verifyForgetCode', 'LawyerController@verifyForgetCode');
+    $api->patch('/password', 'LawyerController@resetPassword');
     $api->post('/logout', 'LawyerController@logout');
     
     $api->group(['middleware' => 'refreshToken:lawyer'], function ($api) {
@@ -89,6 +95,7 @@ $api->version('v1', [
     $api->get('/cities', 'AreaController@getCitiesByProvinceId');
     $api->get('/areas', 'AreaController@getAreasByCityId');
 });
+
 
 //管理端路由
 $api->version('v1', [

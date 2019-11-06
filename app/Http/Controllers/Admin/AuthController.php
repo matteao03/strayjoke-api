@@ -23,7 +23,7 @@ class AuthController extends Controller
     //获取管理员信息
     public function getInfo()
     {
-        return response()->json(auth()->user());
+        return response()->json(auth('admin')->user());
     }
     
      //返回token
@@ -32,7 +32,7 @@ class AuthController extends Controller
          return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth('admin')->factory()->getTTL() * 60
          ]);
      }
 }
