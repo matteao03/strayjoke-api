@@ -15,14 +15,15 @@ class OrderController extends Controller
     {
         $user = User::find(6);
         //开启一个数据库事务
-        $order = \DB::transaction(function() use ($user, $request) {
+        $order = \DB::transaction(function () use ($user, $request) {
             $sku = ProductSku::find($request->skuId);
 
             $order = new Order([
-                'remark' =>$request->remark,
+                'remark' => $request->remark,
                 'total_amount' => $sku->price,
                 'start_at' => time(),
-                'end_at' => time()
+                'end_at' => time(),
+                'sku_id' => $request->skuId
             ]);
             // 订单关联到当前用户
             $order->user()->associate($user);
@@ -38,7 +39,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $query = $request->query('status');
-        if ($query === 'all'){
+        if ($query === 'all') {
             $orders = auth('user')->user()->orders;
         } else if ($query === 'nopay') {
             $orders = auth('user')->user()->orders()->whereNull('paid_at')->get();

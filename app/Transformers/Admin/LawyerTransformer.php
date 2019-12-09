@@ -35,7 +35,8 @@ class LawyerTransformer extends TransformerAbstract
             'comment' => $lawyer->comment,
             'createdTime' =>(string) $lawyer->created_at,
             'updatedTime' => (string)$lawyer->updated_at,
-            'isCollect' => boolval(app(Auth::class)->user()->collectLawyers()->find($lawyer->id))
+            'isCollect' => false
+            // 'isCollect' => boolval(app(Auth::class)->user()->collectLawyers()->find($lawyer->id))
         ];
     }
 }

@@ -17,7 +17,7 @@ class ProductTransformer extends TransformerAbstract
             'desc' => $product->description,
             'isSale' => $product->on_sale,
             'price' => $product->price,
-            'review' => $product->review_count,
+            'reviewCount' => $product->review_count,
             'created_at' => $product->created_at,
             'updated_at' => $product->updated_at,
         ];
@@ -27,7 +27,7 @@ class ProductTransformer extends TransformerAbstract
     {
         return $this->collection($product->skus, new ProductSkuTransformer());
     }
-    
+
     public function includeLawyer(Product $product)
     {
         return $this->item($product->lawyer, new LawyerTransformer());

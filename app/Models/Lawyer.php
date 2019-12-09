@@ -31,6 +31,12 @@ class Lawyer extends Authenticatable implements JWTSubject
         return $this->hasMany(Product::class);
     }
 
+    //标签表
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
     //审核表
     public function LawyerChecks()
     {

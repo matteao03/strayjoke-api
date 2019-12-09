@@ -9,8 +9,8 @@ class Product extends Model
     const ON_SALE = 1;
     const OFF_SALE = 0;
 
-    const TYPE_PERSON = 'person';
-    const TYPE_ORG = 'org';
+    const TYPE_PERSON = 1;
+    const TYPE_ORG = 2;
 
     public static $statusMap = [
         self::ON_SALE => '上架',
@@ -18,16 +18,16 @@ class Product extends Model
     ];
 
     public static $typeMap = [
-        self::TYPE_PERSON => '个人法律顾问',
-        self::TYPE_ORG => '公司法律顾问',
+        self::TYPE_PERSON => '法律顾问',
+        self::TYPE_ORG => '公司法务',
     ];
 
     protected $fillable = [
-        'title', 'description', 'image', 'on_sale', 
+        'title', 'description', 'image', 'on_sale',
         'rating', 'sold_count', 'review_count', 'price', 'lawyer_id'
     ];
     protected $casts = [
-        'on_sale' => 'boolean', 
+        'on_sale' => 'boolean',
     ];
 
     // 与商品SKU关联
@@ -47,5 +47,4 @@ class Product extends Model
     {
         return $this->hasMany(Order::class);
     }
-
 }

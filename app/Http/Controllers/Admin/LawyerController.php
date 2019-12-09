@@ -12,8 +12,8 @@ class LawyerController extends Controller
 {
     public function index(Request $request)
     {
-        if ($name = $request->query('name')){
-            $lawyers = Lawyer::where('real_name', 'like', '%'.$name.'%' )->paginate($request->query('size'));
+        if ($name = $request->query('name')) {
+            $lawyers = Lawyer::where('real_name', 'like', '%' . $name . '%')->paginate($request->query('size'));
         } else {
             $lawyers = Lawyer::paginate($request->query('size'));
         }
@@ -24,19 +24,19 @@ class LawyerController extends Controller
     public function check(Request $request)
     {
         //开启事务
-        \DB::transaction(function() use ($request) {
+        \DB::transaction(function () use ($request) {
             $lawyerId = $request->lawyer_id;
             $status = $request->status;
             $checkBy = auth('admin')->user()->id;
 
             $lawyer = Lawyer::find($lawyerId);
-            $lawyer->update(['status'=>$status]);
+            $lawyer->update(['status' => $status]);
 
             LawyerCheck::create([
-                'content'=>$request->content,
-                'lawyer_id'=> $lawyerId,
-                'status'=>$status,
-                'checked_by'=>$checkBy
+                'content' => $request->content,
+                'lawyer_id' => $lawyerId,
+                'status' => $status,
+                'checked_by' => $checkBy
             ]);
         });
 
@@ -45,8 +45,8 @@ class LawyerController extends Controller
 
     public function checkIndex(Request $request)
     {
-        $lawyer = Lawyer::find($request->query(lawyerId));
+        $lawyer = Lawyer::find($request->query('lawyerId'));
 
-        return $this->response->collection($lawyer->lawyerChecks(), new LawyerCheckTransformer());
+        return $this->response->collection($lawyer->lawyerChecks, new LawyerCheckTransformer());
     }
 }

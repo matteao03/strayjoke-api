@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\ProductSku;
 use App\Transformers\ProductTransformer;
 
 class ProductController extends Controller
@@ -12,8 +11,12 @@ class ProductController extends Controller
     //列表
     public function index(Request $request)
     {
-        $products = Product::all();
-        return $this->response->collection($products, new ProductTransformer());
+        $type = $request->query('type');
+        $productType = Product::$typeMap;
+        $products = Product::where('type', $type)
+            ->orderBy($request->query('order') ?: 'updated_at', $request->query('sort') ?: 'asc')
+            ->paginate(1);
+        return $this->response->paginator($products, new ProductTransformer())->addMeta('type', $productType[$type]);
     }
 
     //更新

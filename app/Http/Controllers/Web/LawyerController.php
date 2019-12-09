@@ -7,7 +7,7 @@ use App\Models\Lawyer;
 
 class LawyerController extends Controller
 {
-    
+
     //收藏
     public function collect(Lawyer $lawyer)
     {

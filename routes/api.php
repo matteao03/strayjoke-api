@@ -21,9 +21,9 @@ $api = app('Dingo\Api\Routing\Router');
 
 //web端路由
 $api->version('v1', [
-    'namespace' =>'App\Http\Controllers\Web',
+    'namespace' => 'App\Http\Controllers\Web',
     'middleware' => 'api'
-], function($api){
+], function ($api) {
     $api->post('/signupCode', 'VerifyCodeController@storeSignupCode');
     $api->post('/loginCode', 'VerifyCodeController@storeLoginCode');
     $api->post('/forgetCode', 'VerifyCodeController@storeForgetCode');
@@ -36,7 +36,9 @@ $api->version('v1', [
     $api->get('/products', 'ProductController@index');
     $api->get('/skus', 'ProductSkuController@index');
     $api->get('/sku/{sku}', 'ProductSkuController@detail');
-    
+    $api->get('/tags', 'TagController@index');
+    $api->get('/tag/{tag}/lawyers', 'TagController@lawyers');
+
     $api->group(['middleware' => 'refreshToken:user'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
         $api->patch('auth/name', 'AuthController@updateName');
@@ -56,10 +58,10 @@ $api->version('v1', [
 
 //律师端路由
 $api->version('v1', [
-    'namespace' =>'App\Http\Controllers\Lawyer',
+    'namespace' => 'App\Http\Controllers\Lawyer',
     'prefix' => 'lawyer',
     'middleware' => 'api'
-], function($api){
+], function ($api) {
     //注册相关
     $api->post('/signupCode', 'LawyerController@storeSignupCode');
     $api->post('/signup', 'LawyerController@signup');
@@ -71,24 +73,24 @@ $api->version('v1', [
     $api->post('/verifyForgetCode', 'LawyerController@verifyForgetCode');
     $api->patch('/password', 'LawyerController@resetPassword');
     $api->post('/logout', 'LawyerController@logout');
-    
+
     $api->group(['middleware' => 'refreshToken:lawyer'], function ($api) {
-        
+
         $api->get('/info', 'LawyerController@getInfo');
         $api->patch('/info/{phone}', 'LawyerController@updateInfo');
         $api->post('/avatar', 'LawyerController@postAvatar');
-       
+        $api->get('/lawyerChecks', 'LawyerController@checkIndex');
+
         $api->post('/product', 'ProductController@store');
         $api->get('/products', 'ProductController@index');
         $api->patch('/product/{product}', 'ProductController@update');
-        
+
         $api->get('/skus', 'ProductSkuController@index');
         $api->post('/sku', 'ProductSkuController@store');
         $api->patch('/sku/{sku}', 'ProductSkuController@update');
         $api->delete('/sku/{sku}', 'ProductSkuController@delete');
 
         $api->get('/orders', 'OrderController@index');
-
     });
 
     $api->get('/allProvinces', 'AreaController@getAllProvinces');
@@ -99,9 +101,9 @@ $api->version('v1', [
 
 //管理端路由
 $api->version('v1', [
-    'namespace' =>'App\Http\Controllers\Admin',
+    'namespace' => 'App\Http\Controllers\Admin',
     'prefix' => 'admin'
-], function($api){
+], function ($api) {
     //登录相关
     $api->post('/login', 'AuthController@login');
 
@@ -113,5 +115,9 @@ $api->version('v1', [
         $api->get('/lawyerChecks', 'LawyerController@checkIndex');
         $api->get('/products', 'ProductController@index');
         $api->get('/orders', 'OrderController@index');
+        $api->get('/tags', 'TagController@index');
+        $api->post('/tag', 'TagController@store');
+        $api->patch('/tag/{tag}', 'TagController@update');
+        $api->delete('/tag/{id}', 'TagController@delete');
     });
 });
