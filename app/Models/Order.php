@@ -21,8 +21,8 @@ class Order extends Model
     ];
 
     protected $fillable = [
-        'no', 'total_amount','remark','paid_at','payment_method','payment_no', 
-        'refund_status', 'refund_no', 'closed','reviewed'
+        'no', 'total_amount', 'remark', 'paid_at', 'payment_method', 'payment_no',
+        'refund_status', 'refund_no', 'closed', 'reviewed', 'sku_id', 'product_id'
     ];
 
     protected $casts = [
@@ -76,7 +76,7 @@ class Order extends Model
         $prefix = date('YmdHis');
         for ($i = 0; $i < 10; $i++) {
             // 随机生成 6 位的数字
-            $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $no = $prefix . str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             // 判断是否已经存在
             if (!static::query()->where('no', $no)->exists()) {
                 return $no;

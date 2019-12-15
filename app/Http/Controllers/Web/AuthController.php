@@ -8,51 +8,51 @@ use App\Http\Requests\Web\AuthCodeRequest;
 use App\Http\Requests\Web\AuthPasswordRequest;
 use App\Http\Requests\Web\AuthSignupRequest;
 use App\Transformers\UserTransformer;
+use App\Transformers\LawyerTransformer;
 use Illuminate\Http\Request;
 use App\Handlers\ImageUploadHandler;
 
 class AuthController extends Controller
 {
     public function __construct()
-    {
-    }
+    { }
 
     //注册
     public function signup(AuthSignupRequest $request)
     {
-        $verifyData = Cache::get('signupCode:'.$request->phone);
-        
+        $verifyData = Cache::get('signupCode:' . $request->phone);
+
         if (!$verifyData) {
             //401
             return $this->response->errorUnauthorized('验证码不存在');
         }
-        
+
         if (!hash_equals($verifyData, $request->verifyCode)) {
             // 401
             return $this->response->errorUnauthorized('验证码错误');
         }
-        
+
         $user = User::create([
             'phone' => $request->phone,
             'password' => bcrypt($request->password),
             'nick_name' => User::randomNickname()
         ]);
-        
+
         // 清除缓存
-        Cache::forget('signupCode:'.$request->phone);
-        
+        Cache::forget('signupCode:' . $request->phone);
+
         //自动登录
         $token = auth('user')->login($user);
-        
+
         return $this->respondWithToken($token);
     }
 
     //密码登录
-    public function loginByPassword (AuthPasswordRequest $request)
+    public function loginByPassword(AuthPasswordRequest $request)
     {
         $credentials = request(['phone', 'password']);
 
-        if (! $token = auth('user')->attempt($credentials)) {
+        if (!$token = auth('user')->attempt($credentials)) {
             return  $this->response->errorUnauthorized('用户名或密码错误');
         }
 
@@ -60,21 +60,21 @@ class AuthController extends Controller
     }
 
     //验证码登录
-    public function loginByCode (AuthCodeRequest $request)
+    public function loginByCode(AuthCodeRequest $request)
     {
-        $verifyData = Cache::get('loginCode:'.$request->phone);
-        
+        $verifyData = Cache::get('loginCode:' . $request->phone);
+
         if (!$verifyData) {
             return $this->response->errorUnauthorized('验证码不存在');
         }
-        
+
         if (!hash_equals($verifyData, $request->verifyCode)) {
             // 401
             return $this->response->errorUnauthorized('验证码错误');
         }
-        
+
         $user = User::where('phone', $request->phone)->first();
-        if (!$user){
+        if (!$user) {
             $user = User::create([
                 'phone' => $request->phone,
                 'password' => bcrypt($request->password),
@@ -82,63 +82,63 @@ class AuthController extends Controller
                 'avatar' => ''
             ]);
         }
-        
+
         // 清除缓存
-        Cache::forget('loginCode:'.$request->phone);
-        
+        Cache::forget('loginCode:' . $request->phone);
+
         //自动登录
         $token = auth('user')->login($user);
-        
+
         return $this->respondWithToken($token);
     }
 
     //验证找回密码
-    public function verifyForgetCode (AuthCodeRequest $request)
+    public function verifyForgetCode(AuthCodeRequest $request)
     {
-        $verifyData = Cache::get('forgetCode:'.$request->phone);
-        
-        
+        $verifyData = Cache::get('forgetCode:' . $request->phone);
+
+
         if (!$verifyData) {
             //缓存
-            Cache::put('verifyForgetCode:'.$request->phone, 0, now()->addMinutes(5));
+            Cache::put('verifyForgetCode:' . $request->phone, 0, now()->addMinutes(5));
             //401
             return $this->response->errorUnauthorized('验证码已失效');
         }
-        
+
         if (!hash_equals($verifyData, $request->verifyCode)) {
             //缓存
-            Cache::put('verifyForgetCode:'.$request->phone, 0, now()->addMinutes(5));
+            Cache::put('verifyForgetCode:' . $request->phone, 0, now()->addMinutes(5));
             //401
             return $this->response->errorUnauthorized('验证码错误');
         }
-        
+
         // 清除缓存
-        Cache::forget('forgetCode:'.$request->phone);
+        Cache::forget('forgetCode:' . $request->phone);
         //缓存
-        Cache::put('verifyForgetCode:'.$request->phone, 1, now()->addMinutes(5));
-        
+        Cache::put('verifyForgetCode:' . $request->phone, 1, now()->addMinutes(5));
+
         return $this->response->noContent();
     }
 
     //重置密码
-    public function resetPassword (AuthPasswordRequest $request)
+    public function resetPassword(AuthPasswordRequest $request)
     {
-        $verifyData = Cache::get('verifyForgetCode:'.$request->phone);
-        
+        $verifyData = Cache::get('verifyForgetCode:' . $request->phone);
+
         if (!$verifyData) {
             return $this->response->errorUnauthorized('验证码已失效');
         }
-        
+
         $user = User::where('phone', $request->phone)->first();
-        if ($user){
+        if ($user) {
             $user->password =  bcrypt($request->password);
             $user->save();
-            
+
             return $this->response->noContent();
         }
 
         //清除缓存
-        Cache::forget('verifyForgetCode:'.$request->phone);
+        Cache::forget('verifyForgetCode:' . $request->phone);
         return $this->response->error('网络出错,请重新验证', 500);
     }
 
@@ -165,22 +165,28 @@ class AuthController extends Controller
         return $this->response->noContent();
     }
 
-     //上传用户头像
-     public function updateAvatar(Request $request)
-     {
+    //上传用户头像
+    public function updateAvatar(Request $request)
+    {
         $uploader = new ImageUploadHandler();
         $user = auth('user')->user();
-        $image= $request->avatar;
-        $path = public_path().'/image/user/avatar';
-        $imageName = $user->id.'.png';
+        $image = $request->avatar;
+        $path = public_path() . '/image/user/avatar';
+        $imageName = $user->id . '.png';
 
-        if (!$uploader->saveBase64($image, $path, $imageName)){
+        if (!$uploader->saveBase64($image, $path, $imageName)) {
             return $this->response->errorInternal();
-        } 
-        
-        $user->update(['avatar' => '/image/user/avatar/'.$imageName]);
+        }
+
+        $user->update(['avatar' => '/image/user/avatar/' . $imageName]);
         return $this->response->noContent();
-     }
+    }
+
+    public function indexLawyers()
+    {
+        $user = Auth('user')->user();
+        return $this->response->collection($user->collectLawyers, new LawyerTransformer());
+    }
 
     //退出
     public function logout()
