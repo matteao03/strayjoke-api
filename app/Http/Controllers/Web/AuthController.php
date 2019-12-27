@@ -11,11 +11,13 @@ use App\Transformers\UserTransformer;
 use App\Transformers\LawyerTransformer;
 use Illuminate\Http\Request;
 use App\Handlers\ImageUploadHandler;
+use App\Events\CouponNew;
 
 class AuthController extends Controller
 {
     public function __construct()
-    { }
+    {
+    }
 
     //注册
     public function signup(AuthSignupRequest $request)
@@ -35,11 +37,15 @@ class AuthController extends Controller
         $user = User::create([
             'phone' => $request->phone,
             'password' => bcrypt($request->password),
-            'nick_name' => User::randomNickname()
+            'nick_name' => User::randomNickname(),
+            'avatar' => '/image/user/avatar/6.png'
         ]);
 
         // 清除缓存
         Cache::forget('signupCode:' . $request->phone);
+
+        //分发优惠券
+        event(new CouponNew($user));
 
         //自动登录
         $token = auth('user')->login($user);
@@ -182,10 +188,15 @@ class AuthController extends Controller
         return $this->response->noContent();
     }
 
-    public function indexLawyers()
+    public function indexLawyers(Request $request)
     {
         $user = Auth('user')->user();
-        return $this->response->collection($user->collectLawyers, new LawyerTransformer());
+        $size = $request->query('size') ?: 10;
+        $page = $request->query('page') ?: 1;
+        $lawyers = $user->collectLawyers()
+            ->orderBy($request->query('order') ?: 'updated_at', $request->query('sort') ?: 'asc')
+            ->paginate($size, ['*'], 'page', $page);
+        return $this->response->paginator($lawyers, new LawyerTransformer());
     }
 
     //退出

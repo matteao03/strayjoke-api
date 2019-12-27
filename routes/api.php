@@ -35,10 +35,11 @@ $api->version('v1', [
 
     $api->get('/products', 'ProductController@index');
     $api->get('/skus', 'ProductSkuController@index');
-    $api->get('/sku/{sku}', 'ProductSkuController@detail');
+    $api->get('/cert/{sku}', 'OrderController@preStore');
     $api->get('/tags', 'TagController@index');
     $api->get('/tag/{tag}/lawyers', 'TagController@lawyers');
     $api->get('/lawyer/{lawyer}', 'LawyerController@detail');
+    $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);
 
     $api->group(['middleware' => 'refreshToken:user'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
@@ -47,10 +48,10 @@ $api->version('v1', [
         $api->patch('auth/avatar', 'AuthController@updateAvatar');
         $api->post('/order', 'OrderController@store');
         $api->get('/orders', 'OrderController@index');
-        $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);
         $api->post('/lawyers/{lawyer}/collect', 'LawyerController@collect');
         $api->delete('/lawyers/{lawyer}/collect', 'LawyerController@uncollect');
         $api->get('/collectLawyers', 'AuthController@indexLawyers');
+        $api->get('/coupons', 'CouponController@index');
     });
 });
 
@@ -117,5 +118,9 @@ $api->version('v1', [
         $api->post('/tag', 'TagController@store');
         $api->patch('/tag/{tag}', 'TagController@update');
         $api->delete('/tag/{id}', 'TagController@delete');
+        $api->get('/coupons', 'CouponController@index');
+        $api->post('/coupon', 'CouponController@store');
+        $api->patch('/coupon/{coupon}', 'CouponController@update');
+        $api->delete('/coupon/{coupon}', 'CouponController@delete');
     });
 });
