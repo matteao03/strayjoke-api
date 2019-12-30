@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Coupon;
+use App\Models\CouponTemplate;
 use Illuminate\Http\Request;
-use App\Transformers\Admin\CouponTransformer;
+use App\Transformers\Admin\CouponTemplateTransformer;
 
-class CouponController extends Controller
+class CouponTemplateController extends Controller
 {
     public function index(Request $request)
     {
-        $coupons = Coupon::paginate($request->query('size'));
+        $templates = CouponTemplate::paginate($request->query('size'));
 
-        return $this->response->paginator($coupons, new CouponTransformer());
+        return $this->response->paginator($templates, new CouponTemplateTransformer());
     }
 
 
     //创建
     public function store(Request $request)
     {
-        Coupon::create([
+        CouponTemplate::create([
             'name' => $request->name,
             'type' =>  $request->type,
             'period_type' =>  $request->periodType,
@@ -37,16 +37,16 @@ class CouponController extends Controller
     }
 
     //更新
-    public function update(Request $request,  Coupon $coupon)
+    public function update(Request $request,  CouponTemplate $template)
     {
-        $coupon->update([]);
+        $template->update([]);
         return $this->response->noContent();
     }
 
     //删除
-    public function delete(Coupon $coupon)
+    public function delete(CouponTemplate $template)
     {
-        $coupon->delete();
+        $template->delete();
         return $this->response->noContent();
     }
 }

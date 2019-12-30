@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Models\Coupon;
+use App\Models\CouponTemplate;
 use Carbon\Carbon;
 use App\Events\CouponNew;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,30 +28,29 @@ class ReceiveNewCoupon
      */
     public function handle(CouponNew $event)
     {
-        $coupons = Coupon::where('scene_type', Coupon::SCENE_TYPE_NEW)->get();
-        foreach ($coupons as $coupon) {
+        $templates = CouponTemplate::where('scene_type', CouponTemplate::SCENE_TYPE_NEW)->get();
+        foreach ($templates as $template) {
             //判断是否有余量
-            if ($coupon->total <= $coupon->used) {
+            if ($template->total <= $template->used) {
                 continue;
             }
             //填充优惠券期限
-            if ($coupon->period_type === Coupon::PERIOD_TYPE_FIXED) {
+            if ($template->period_type === CouponTemplate::PERIOD_TYPE_FIXED) {
                 //判断是否过期
-                if ($coupon->not_after <= Carbon::now()) {
+                if ($template->not_after <= Carbon::now()) {
                     continue;
                 }
-                $notBefore = $coupon->not_before;
-                $notAfter = $coupon->not_after;
+                $notBefore = $template->not_before;
+                $notAfter = $template->not_after;
             } else {
-                $days = $coupon->delay_day;
+                $days = $template->delay_day;
                 $notBefore = now();
                 $notAfter = date("Y-m-d H:i:s", strtotime("+$days days", time()));
             }
 
-            $event->user->coupons()->attach($coupon->id, [
+            $event->user->coupons()->attach($template->id, [
                 'not_before' => $notBefore,
                 'not_after' => $notAfter,
-                'status' => Coupon::STATUS_OK
             ]);
         }
     }

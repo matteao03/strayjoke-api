@@ -18,7 +18,7 @@ class OrderController extends Controller
     {
         $user = auth('user')->user();
         //查找优惠券
-        $coupon = $user->coupons()->where('status', Coupon::STATUS_OK)
+        $coupon = $user->coupons()->where('not_after', '>=', now())
             ->orderBy('not_after', 'asc')->first();
 
         return $this->response->array(['coupon' => $coupon->toArray(), 'sku' => $sku->toArray()]);

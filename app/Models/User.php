@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
     //优惠券
     public function coupons()
     {
-        return $this->belongsToMany(Coupon::class)->withTimestamps();
+        return $this->hasMany(Coupon::class);
     }
 
     //收藏lawyer

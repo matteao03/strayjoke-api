@@ -118,9 +118,9 @@ $api->version('v1', [
         $api->post('/tag', 'TagController@store');
         $api->patch('/tag/{tag}', 'TagController@update');
         $api->delete('/tag/{id}', 'TagController@delete');
-        $api->get('/coupons', 'CouponController@index');
-        $api->post('/coupon', 'CouponController@store');
-        $api->patch('/coupon/{coupon}', 'CouponController@update');
-        $api->delete('/coupon/{coupon}', 'CouponController@delete');
+        $api->get('/couponTemplates', 'CouponTemplateController@index');
+        $api->post('/couponTemplate', 'CouponTemplateController@store');
+        $api->patch('/couponTemplate/{template}', 'CouponTemplateController@update');
+        $api->delete('/couponTemplate/{template}', 'CouponTemplateController@delete');
     });
 });
