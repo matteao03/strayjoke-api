@@ -22,7 +22,8 @@ class Order extends Model
 
     protected $fillable = [
         'no', 'total_amount', 'remark', 'paid_at', 'payment_method', 'payment_no',
-        'refund_status', 'refund_no', 'closed', 'reviewed', 'sku_id', 'product_id'
+        'refund_status', 'refund_no', 'closed', 'reviewed', 'sku_id', 'product_id',
+        'coupon_id', 'start_at', 'end_at'
     ];
 
     protected $casts = [

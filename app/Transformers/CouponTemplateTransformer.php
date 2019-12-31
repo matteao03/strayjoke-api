@@ -14,7 +14,7 @@ class CouponTemplateTransformer extends TransformerAbstract
             'name' => $template->name,
             'type' => $template->type,
             'typeText' => CouponTemplate::$typeMap[$template->type],
-            'value' => (int) $template->value,
+            'value' => $template->value,
             'notBefore' => (string) $template->not_before,
             'notAfter' => (string) $template->not_after
         ];

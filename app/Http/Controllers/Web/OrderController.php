@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Web;
 use Illuminate\Http\Request;
 use App\Http\Requests\Web\OrderRequest;
 use App\Models\Coupon;
+use App\Models\CouponTemplate;
 use App\Models\Order;
 use App\Models\ProductSku;
 use App\Models\User;
 use App\Transformers\OrderTransformer;
 use App\Transformers\ProductSkuTransformer;
 use Carbon\Carbon;
+use Symfony\Component\CssSelector\Parser\Reader;
+use App\Jobs\CloseOrder;
 
 class OrderController extends Controller
 {
@@ -33,23 +36,29 @@ class OrderController extends Controller
             $sku = ProductSku::find($request->skuId);
             $totalAmount = $sku->price;
             if ($couponId = $request->couponId) {
-                $coupon = Coupon::find($couponId);
-                if ($coupon->type === Coupon::TYPE_DISCOUNT) {
-                    if ($totalAmount > $coupon->value) {
-                        $totalAmount = $totalAmount - $coupon->value;
+                $template = Coupon::find($couponId)->couponTemplate;
+                if ($template->type === CouponTemplate::TYPE_DISCOUNT) {
+                    if ($totalAmount > $template->value) {
+                        $totalAmount = $totalAmount - $template->value;
                     } else {
                         $totalAmount = 0;
                     }
                 } else {
-                    $totalAmount = $totalAmount * $coupon->value;
+                    $totalAmount = $totalAmount * $template->value;
                 }
             }
+
+            // $start_at = $request->start_at;
+
+            $start_at = date('Y-m-s H:i:s', strtotime($request->start_at));
+            //服务结束时间
+            $end_at = date("Y-m-d H:i:s", strtotime("+$sku->period_value days", strtotime($start_at)));
 
             $order = new Order([
                 'remark' => $request->remark,
                 'total_amount' => $totalAmount,
-                'start_at' => $request->start_at,
-                'end_at' => time(),
+                'start_at' => $start_at,
+                'end_at' => $end_at,
                 'sku_id' => $sku->id,
                 'product_id' => $sku->product->id,
                 'coupon_id' => $couponId
@@ -58,6 +67,8 @@ class OrderController extends Controller
             $order->user()->associate($user);
             // 写入数据库
             $order->save();
+
+            $this->dispatch(new CloseOrder($order, config('app.order_ttl')));
 
             return $order;
         });
@@ -80,5 +91,10 @@ class OrderController extends Controller
             $orders = auth('user')->user()->orders()->whereNotNull('refund_status')->get();
         }
         return $this->response->collection($orders, new OrderTransformer());
+    }
+
+    public function detail(Order $order)
+    {
+        return $this->response->item($order, new OrderTransformer());
     }
 }

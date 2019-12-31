@@ -174,11 +174,11 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
+
         //custom providers
         App\Providers\EasySmsServiceProvider::class,
         Cblink\Region\RegionServiceProvider::class,
-        
+
     ],
 
     /*
@@ -231,5 +231,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+
+    //订单有效期
+    'order_ttl' => 1800,
 
 ];

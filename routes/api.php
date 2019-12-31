@@ -48,6 +48,7 @@ $api->version('v1', [
         $api->patch('auth/avatar', 'AuthController@updateAvatar');
         $api->post('/order', 'OrderController@store');
         $api->get('/orders', 'OrderController@index');
+        $api->get('/order/{order}', 'OrderController@detail');
         $api->post('/lawyers/{lawyer}/collect', 'LawyerController@collect');
         $api->delete('/lawyers/{lawyer}/collect', 'LawyerController@uncollect');
         $api->get('/collectLawyers', 'AuthController@indexLawyers');
