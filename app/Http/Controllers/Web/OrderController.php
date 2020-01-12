@@ -8,11 +8,7 @@ use App\Models\Coupon;
 use App\Models\CouponTemplate;
 use App\Models\Order;
 use App\Models\ProductSku;
-use App\Models\User;
 use App\Transformers\OrderTransformer;
-use App\Transformers\ProductSkuTransformer;
-use Carbon\Carbon;
-use Symfony\Component\CssSelector\Parser\Reader;
 use App\Jobs\CloseOrder;
 
 class OrderController extends Controller
@@ -78,19 +74,23 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $query = $request->query('status') ?: 'all';
+        $user = auth('user')->user();
+        $query = $request->query('type') ?: 'all';
+        $size = $request->query('size') ?: 10;
+        $page = $request->query('page') ?: 1;
+
         if ($query === 'all') {
-            $orders = auth('user')->user()->orders;
+            $orders = $user->orders()->paginate($size, ['*'], 'page', $page);
         } else if ($query === 'nopay') {
-            $orders = auth('user')->user()->orders()->whereNull('paid_at')->get();
+            $orders = $user->orders()->whereNull('paid_at')->paginate($size, ['*'], 'page', $page);
         } else if ($query === 'paid') {
-            $orders = auth('user')->user()->orders()->whereNotNull('paid_at')->get();
+            $orders = $user->orders()->whereNotNull('paid_at')->paginate($size, ['*'], 'page', $page);
         } else if ($query === 'nocomment') {
-            $orders = auth('user')->user()->orders()->whereNotNull('paid_at')->get();
+            $orders = $user->orders()->whereNotNull('paid_at')->paginate($size, ['*'], 'page', $page);
         } else if ($query === 'refund') {
-            $orders = auth('user')->user()->orders()->whereNotNull('refund_status')->get();
+            $orders = $user->orders()->whereNotNull('refund_no')->paginate($size, ['*'], 'page', $page);
         }
-        return $this->response->collection($orders, new OrderTransformer());
+        return $this->response->paginator($orders, new OrderTransformer());
     }
 
     public function detail(Order $order)

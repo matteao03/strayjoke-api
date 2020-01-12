@@ -71,6 +71,13 @@ class Order extends Model
         return $this->belongsTo(ProductSku::class);
     }
 
+    //订单评价
+    public function comment()
+    {
+        return $this->hasOne(OrderComment::class);
+    }
+
+
     public static function findAvailableNo()
     {
         // 订单流水号前缀

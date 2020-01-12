@@ -13,6 +13,7 @@
         "cblink/region": "^1.0",
         "dingo/api": "^2.3",
         "doctrine/dbal": "^2.9",
+        "endroid/qr-code": "^3.7",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",

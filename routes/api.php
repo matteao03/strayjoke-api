@@ -40,6 +40,10 @@ $api->version('v1', [
     $api->get('/tag/{tag}/lawyers', 'TagController@lawyers');
     $api->get('/lawyer/{lawyer}', 'LawyerController@detail');
     $api->get('/payment/{order}/alipay', ['as' => 'alipay', 'uses' => 'PaymentController@payByAlipay']);
+    $api->get('/payment/{order}/wxpay', ['as' => 'wxpay', 'uses' => 'PaymentController@payByWechat']);
+    $api->get('payment/alipay/return', ['as' => 'payment.alipay.return', 'uses' => 'PaymentController@alipayReturn']);
+    $api->post('payment/alipay/notify', ['as' => 'payment.alipay.notify', 'uses' => 'PaymentController@alipayNotify']);
+    $api->post('payment/wechat/notify', ['as' => 'payment.wechat.notify', 'uses' => 'PaymentController@wechatNotify']);
 
     $api->group(['middleware' => 'refreshToken:user'], function ($api) {
         $api->get('/info', 'AuthController@getInfo');
@@ -49,8 +53,10 @@ $api->version('v1', [
         $api->post('/order', 'OrderController@store');
         $api->get('/orders', 'OrderController@index');
         $api->get('/order/{order}', 'OrderController@detail');
+        $api->post('/order/{order}/comment', 'OrderCommentController@store');
         $api->post('/lawyers/{lawyer}/collect', 'LawyerController@collect');
         $api->delete('/lawyers/{lawyer}/collect', 'LawyerController@uncollect');
+        $api->get('/lawyer/{lawyer}/comments', 'OrderCommentController@index');
         $api->get('/collectLawyers', 'AuthController@indexLawyers');
         $api->get('/coupons', 'CouponController@index');
     });

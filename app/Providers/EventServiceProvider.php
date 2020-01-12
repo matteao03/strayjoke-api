@@ -20,7 +20,11 @@ class EventServiceProvider extends ServiceProvider
         // ],
         'App\Events\CouponNew' => [
             'App\Listeners\ReceiveNewCoupon',
-        ]
+        ],
+        'App\Events\OrderPaid' => [
+            'App\Listeners\UpdateProductSoldCount',
+            'App\Listeners\OrderPaidSendSms'
+        ],
     ];
 
     /**
